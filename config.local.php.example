@@ -1,0 +1,10 @@
+<?php
+// Salin file ini menjadi config.local.php, lalu isi sesuai database hosting.
+// Jangan commit config.local.php ke GitHub.
+return [
+    'host' => 'localhost',
+    'port' => '3306',
+    'name' => 'nama_database',
+    'user' => 'user_database',
+    'password' => 'password_database',
+];

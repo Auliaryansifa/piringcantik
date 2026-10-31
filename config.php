@@ -1,8 +1,29 @@
 <?php
+
+// Local values stay outside Git. Production hosts can provide DB_* environment variables.
+$localConfigFile = __DIR__ . '/config.local.php';
+$localConfig = is_file($localConfigFile) ? require $localConfigFile : [];
+$dbHost = getenv('DB_HOST') ?: ($localConfig['host'] ?? 'localhost');
+$dbName = getenv('DB_NAME') ?: ($localConfig['name'] ?? 'piring_cantik');
+$dbUser = getenv('DB_USER') ?: ($localConfig['user'] ?? 'root');
+$dbPass = getenv('DB_PASSWORD') ?: ($localConfig['password'] ?? '');
+$dbPort = getenv('DB_PORT') ?: ($localConfig['port'] ?? '3306');
+
+if (getenv('APP_ENV') === 'production' || is_file($localConfigFile)) {
+    ini_set('display_errors', '0');
+    ini_set('log_errors', '1');
+}
+
+$isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+    || (($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https');
+session_set_cookie_params([
+    'httponly' => true,
+    'secure' => $isHttps,
+    'samesite' => 'Lax',
+]);
 session_start();
 
-// Koneksi database (XAMPP default: user root, password kosong)
-$pdo = new PDO('mysql:host=localhost;dbname=piring_cantik;charset=utf8mb4', 'root', '', [
+$pdo = new PDO("mysql:host={$dbHost};port={$dbPort};dbname={$dbName};charset=utf8mb4", $dbUser, $dbPass, [
     PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
     PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
 ]);

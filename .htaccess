@@ -1,0 +1,10 @@
+Options -Indexes
+
+<FilesMatch "^(config\.php|config\.local\.php|database\.sql|cache_kue\.json|\.env.*)$">
+    Require all denied
+</FilesMatch>
+
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    RewriteRule (^|/)\.git - [F,L]
+</IfModule>
